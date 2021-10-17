@@ -11,11 +11,14 @@ all: start program
 start:
 	@ echo "Start building"
 
-program: $(BUILD)/main.o
-	$(CC) $(BUILD)/main.o -o $(BIN)/$(PROJECT)
+program: $(BUILD)/main.o $(BUILD)/internal.o
+	$(CC) $(BUILD)/main.o $(BUILD)/internal.o -o $(BIN)/$(PROJECT)
 
-$(BUILD)/main.o: main.c
+$(BUILD)/main.o: main.c internal.h
 	$(CC) $(FLAGS) main.c -o $(BUILD)/main.o
+
+$(BUILD)/internal.o: internal.c internal.h
+	$(CC) $(FLAGS) internal.c -o $(BUILD)/internal.o
 
 
 clean:
