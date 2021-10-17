@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "internal.h"
-#include <unistd.h>
+
 void printString(String mess) {
     for (int8_t i = 13; i >= 0; i--) {
         if ((1 << i) & mess.left)
@@ -22,4 +22,8 @@ void printString(String mess) {
             printf("0");
     }
     printf("\n");
+}
+
+void printStringHEX(String mess) {
+    printf("0x%X%lX %X\n", mess.left, mess.right, mess.HC);
 }

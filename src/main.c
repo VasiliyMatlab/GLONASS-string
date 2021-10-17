@@ -7,7 +7,7 @@
 
 int main() {
     setlocale(LC_ALL, "Rus");
-    printf("Генератор первой строки первого кадра навигационного сообщения ГЛОНАСС\n");
+    printf("Генератор строки первого навигационного сообщения ГЛОНАСС\n");
     String message = {0};
     // Генерация случайных чисел
     srand(time(NULL));
@@ -15,6 +15,8 @@ int main() {
     message.right = ((uint64_t) rand()) << 33;
     message.right = message.right | (((uint64_t) rand()) << 2);
     message.right = message.right | (rand() % 4);
+    printf("Сгенерированная строка: \n");
+    printStringHEX(message);
     printString(message);
     return 0;
 }

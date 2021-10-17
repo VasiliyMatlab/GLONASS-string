@@ -10,5 +10,6 @@ typedef struct {
 } String;
 
 void printString(String mess);
+void printStringHEX(String mess);
 
 #endif
