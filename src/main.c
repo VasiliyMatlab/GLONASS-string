@@ -13,6 +13,7 @@ void more_errors(String orig_message);
 int main() {
     setlocale(LC_ALL, "Rus");
     printf("Генератор строки навигационного сообщения ГЛОНАСС\n");
+    printf("Неверные биты будут подсвечиваться \033[31mкрасным\033[0m цветом\n");
     String message = {0};
     // Генерация информационной части сообщения
     srand(time(NULL));
@@ -95,13 +96,24 @@ void one_error(String orig_message) {
             !(strcmp(buf1,"НЕТ"))) {
             // Генерируем случайное число и продолжаем
             error_bit = rand() % 77;
+            printf("Номер искаженного бита: %d\n", error_bit);
             break;
         }
         // Иначе
         printf("Неизвестный тип сообщения; введите еще раз (Да, Нет): ");
     }
     skip: ;
-    printf("%d\n", error_bit);
+    String damaged_message = orig_message;
+    // Инверсия бита
+    if (error_bit > 63)
+        damaged_message.left = invertBit(damaged_message.left, error_bit - 64);
+    else
+        damaged_message.right = invertBit(damaged_message.right, error_bit);
+    // Пересчет контрольной суммы
+    damaged_message.HC = HammingCode(damaged_message);
+    // Вывод на экран правильного сообщения и искаженного
+    printString(orig_message);
+    printDamagedString(damaged_message, error_bit);
 }
 
 // Обнаружение 2-х или 4-х ошибок

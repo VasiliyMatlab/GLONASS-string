@@ -32,6 +32,8 @@ typedef struct {
 void printString(String mess);
 // Вывод строки навигационного сообщения в шестнадцатеричном виде
 void printStringHEX(String mess);
+// Вывод поврежденной строки на экран
+void printDamagedString(String mess, int bit);
 // Вычисление кода Хэмминга
 uint8_t HammingCode(String mess);
 // Подсчет количества единиц в числе

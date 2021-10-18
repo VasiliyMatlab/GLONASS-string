@@ -24,17 +24,59 @@ void printString(String mess) {
             printf("0");
     }
     printf("\n");
-    for (uint8_t i = 0; i < 77; i++)
-        printf("|");
-    printf("\n");
 }
 
 // Вывод строки навигационного сообщения в шестнадцатеричном виде
 void printStringHEX(String mess) {
     printf("0x%04X%lX %02X\n", mess.left, mess.right, mess.HC);
-    printf("  ");
-    for (uint8_t i = 0; i < 20; i++)
-        printf("|");
+}
+
+// Вывод поврежденной строки на экран
+void printDamagedString(String mess, int bit) {
+    for (int8_t i = 12; i >= 0; i--) {
+        if ((1 << i) & mess.left) {
+            // Если поврежденный бит
+            //printf("i = %d bit = %d\n", i, bit - 64);
+            if (i == (bit - 64))
+                printf("\033[31m1\033[0m");
+            // Иначе
+            else
+                printf("1");
+        }
+        else {
+            // Если поврежденный бит
+            if (i == (bit - 64))
+                printf("\033[31m0\033[0m");
+            // Иначе
+            else
+                printf("0");
+        }
+    }
+    for (int8_t i = 63; i >= 0; i--) {
+        if ((1 << i) & mess.right) {
+            // Если поврежденный бит
+            if (i == bit)
+                printf("\033[31m1\033[0m");
+            // Иначе
+            else
+                printf("1");
+        }
+        else {
+            // Если поврежденный бит
+            if (i == bit)
+                printf("\033[31m0\033[0m");
+            // Иначе
+            else
+                printf("0");
+        }
+    }
+    printf(" ");
+    for (int8_t i = 7; i >= 0; i--) {
+        if ((1 << i) & mess.HC)
+            printf("1");
+        else
+            printf("0");
+    }
     printf("\n");
 }
 
