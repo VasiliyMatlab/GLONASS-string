@@ -10,7 +10,7 @@ typedef struct {
     uint8_t HC;     // 8 бит кода Хэмминга
 } String;
 
-
+// Битовые маски для вычисления кода Хэмминга
 #define BIT_7_LEFT  0x1B56
 #define BIT_7_RIGHT 0xAAAD5555555AAAAA
 #define BIT_6_LEFT  0x16CD
