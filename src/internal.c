@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 #include "internal.h"
 
 // Вывод строки навигационного сообщения в бинарном виде
@@ -80,4 +83,12 @@ uint8_t countOnes(uint64_t number) {
         number &= (number - 1);
     }
     return count;
+}
+
+// Проверка, является ли строка числом
+bool isNumber(char *str) {
+    while (*str)
+        if (!isdigit(*str++))
+            return false;
+    return true;
 }

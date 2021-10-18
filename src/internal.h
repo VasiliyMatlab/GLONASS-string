@@ -2,6 +2,7 @@
 #define INTERNAL_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 // Структура строки навигационного сообщения
 typedef struct {
@@ -35,5 +36,7 @@ void printStringHEX(String mess);
 uint8_t HammingCode(String mess);
 // Подсчет количества единиц в числе
 uint8_t countOnes(uint64_t number);
+// Проверка, является ли строка числом
+bool isNumber(char *str);
 
 #endif

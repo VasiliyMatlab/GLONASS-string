@@ -5,21 +5,26 @@
 #include <string.h>
 #include "internal.h"
 
+// Обнаружение и исправление одной ошибки
+void one_error(String orig_message);
+// Обнаружение 2-х или 4-х ошибок
+void more_errors(String orig_message);
+
 int main() {
     setlocale(LC_ALL, "Rus");
     printf("Генератор строки навигационного сообщения ГЛОНАСС\n");
-    String orig_message = {0};
+    String message = {0};
     // Генерация информационной части сообщения
     srand(time(NULL));
-    orig_message.left  = rand() % 4096;
-    orig_message.right = ((uint64_t) rand()) << 33;
-    orig_message.right = orig_message.right | (((uint64_t) rand()) << 2);
-    orig_message.right = orig_message.right | (rand() % 4);
+    message.left  = rand() % 4096;
+    message.right = ((uint64_t) rand()) << 33;
+    message.right = message.right | (((uint64_t) rand()) << 2);
+    message.right = message.right | (rand() % 4);
     // Вычисление кода Хэмминга
-    orig_message.HC = HammingCode(orig_message);
+    message.HC = HammingCode(message);
     printf("Сгенерированная строка (последние 8 бит - код Хэмминга): \n");
-    printStringHEX(orig_message);
-    printString(orig_message);
+    printStringHEX(message);
+    printString(message);
     // Выбор количества ошибок
     printf("Введите количество ошибок в строке (1, 2 или 4): ");
     int num_err = 0;
@@ -33,7 +38,73 @@ int main() {
         }
         printf("Неверное количество ошибок - должно быть 1, 2 или 4\n");
         printf("Введите число еще раз: ");
-
+    }
+    switch (num_err) {
+        case 1:
+            one_error(message);
+            break;
+        case 2:
+            more_errors(message);
+            break;
+        case 4:
+            more_errors(message);
+            break;
+        default:
+            fprintf(stderr, "Ошибка: количество ошибок = %d\n", num_err);
+            exit(EXIT_FAILURE);
     }
     return 0;
+}
+
+// Обнаружение и исправление одной ошибки
+void one_error(String orig_message) {
+    int error_bit = -1;
+    printf("Хотите ввести сами номер бита ошибки? (Да или Нет) ");
+    while (1) {
+        char buf1[16];
+        scanf("%s", buf1);
+        // Если пользователь выбирает "Да"
+        if (!(strcmp(buf1,"Да")) || !(strcmp(buf1,"да")) || 
+            !(strcmp(buf1,"ДА"))) {
+            printf("Введите номер искаженного бита (0-76): ");
+            while (1) {
+                char buf2[16];
+                scanf("%s", buf2);
+                memset(buf1, 0, 16);
+                for (uint8_t i = 0; i < 16; i++)
+                    buf1[i] = buf2[i];
+                // Если введено число
+                if (isNumber(buf2)) {
+                    error_bit = atoi(buf1);
+                    // Если введено верно, то идем дальше
+                    if ((error_bit >= 0) && (error_bit <= 76))
+                        goto skip;
+                    // Если введено неверно, то вводим еще раз
+                    error_bit = -1;
+                    printf("Введенное число лежит вне диапазона; "
+                        "попробуйте еще раз (0-76): ");
+                    continue;
+                }
+                // Если введено не число
+                printf("Неизвестный формат сообщения; "
+                    "попробуйте еще раз (0-76): ");
+            }
+        }
+        // Если пользователь выбирает "Нет"
+        if (!(strcmp(buf1,"Нет")) || !(strcmp(buf1,"нет")) || 
+            !(strcmp(buf1,"НЕТ"))) {
+            // Генерируем случайное число и продолжаем
+            error_bit = rand() % 77;
+            break;
+        }
+        // Иначе
+        printf("Неизвестный тип сообщения; введите еще раз (Да, Нет): ");
+    }
+    skip: ;
+    printf("%d\n", error_bit);
+}
+
+// Обнаружение 2-х или 4-х ошибок
+void more_errors(String orig_message) {
+    return;
 }
