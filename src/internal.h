@@ -38,5 +38,7 @@ uint8_t HammingCode(String mess);
 uint8_t countOnes(uint64_t number);
 // Проверка, является ли строка числом
 bool isNumber(char *str);
+// Инвертирование бита
+uint64_t invertBit(uint64_t number, uint8_t bit);
 
 #endif
