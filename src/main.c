@@ -17,10 +17,12 @@ int main() {
     String message = {0};
     // Генерация информационной части сообщения
     srand(time(NULL));
-    message.left  = rand() % 4096;
+    /*message.left  = rand() % 4096;
     message.right = ((uint64_t) rand()) << 33;
     message.right = message.right | (((uint64_t) rand()) << 2);
-    message.right = message.right | (rand() % 4);
+    message.right = message.right | (rand() % 4);*/
+    message.left = 0b0011100100011;
+    message.right = 0b1111100000010001110000000100100111111000000100011100000001001001;
     // Вычисление кода Хэмминга
     message.HC = HammingCode(message);
     printf("Сгенерированная строка (последние 8 бит - код Хэмминга): \n");

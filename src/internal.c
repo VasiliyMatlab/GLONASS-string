@@ -84,32 +84,32 @@ void printDamagedString(String mess, int bit) {
 uint8_t HammingCode(String mess) {
     uint8_t code = 0;
     // Рассчет 7-го бита
-    uint8_t ones_left  = countOnes(mess.left  | BIT_7_LEFT);
-    uint8_t ones_right = countOnes(mess.right | BIT_7_RIGHT);
+    uint8_t ones_left  = countOnes(mess.left  & BIT_7_LEFT);
+    uint8_t ones_right = countOnes(mess.right & BIT_7_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 7;
     // Рассчет 6-го бита
-    ones_left  = countOnes(mess.left  | BIT_6_LEFT);
-    ones_right = countOnes(mess.right | BIT_6_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_6_LEFT);
+    ones_right = countOnes(mess.right & BIT_6_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 6;
     // Рассчет 5-го бита
-    ones_left  = countOnes(mess.left  | BIT_5_LEFT);
-    ones_right = countOnes(mess.right | BIT_5_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_5_LEFT);
+    ones_right = countOnes(mess.right & BIT_5_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 5;
     // Рассчет 4-го бита
-    ones_left  = countOnes(mess.left  | BIT_4_LEFT);
-    ones_right = countOnes(mess.right | BIT_4_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_4_LEFT);
+    ones_right = countOnes(mess.right & BIT_4_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 4;
     // Рассчет 3-го бита
-    ones_left  = countOnes(mess.left  | BIT_3_LEFT);
-    ones_right = countOnes(mess.right | BIT_3_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_3_LEFT);
+    ones_right = countOnes(mess.right & BIT_3_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 3;
     // Рассчет 2-го бита
-    ones_left  = countOnes(mess.left  | BIT_2_LEFT);
-    ones_right = countOnes(mess.right | BIT_2_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_2_LEFT);
+    ones_right = countOnes(mess.right & BIT_2_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 2;
     // Рассчет 1-го бита
-    ones_left  = countOnes(mess.left  | BIT_1_LEFT);
-    ones_right = countOnes(mess.right | BIT_1_RIGHT);
+    ones_left  = countOnes(mess.left  & BIT_1_LEFT);
+    ones_right = countOnes(mess.right & BIT_1_RIGHT);
     code |= ((ones_left+ones_right) % 2 ? 1 : 0) << 1;
     // Нулевой бит всегда равен 0
     return code;
