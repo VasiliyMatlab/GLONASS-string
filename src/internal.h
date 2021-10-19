@@ -27,7 +27,8 @@ typedef struct {
 #define BIT_1_LEFT  0x0000
 #define BIT_1_RIGHT 0x00000000000FFFFF
 
-
+// Вывод кода Хэмминга в бинарном виде
+void printHammingCode(uint8_t code);
 // Вывод строки навигационного сообщения в бинарном виде
 void printString(String mess);
 // Вывод строки навигационного сообщения в шестнадцатеричном виде
@@ -42,5 +43,7 @@ uint8_t countOnes(uint64_t number);
 bool isNumber(char *str);
 // Инвертирование бита
 uint64_t invertBit(uint64_t number, uint8_t bit);
+// Реверс бит числа
+uint8_t reverseNumber(uint8_t number);
 
 #endif

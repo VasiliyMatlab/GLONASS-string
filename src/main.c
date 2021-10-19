@@ -114,8 +114,45 @@ void one_error(String orig_message) {
     // Пересчет контрольной суммы
     damaged_message.HC = HammingCode(damaged_message);
     // Вывод на экран правильного сообщения и искаженного
+    printf("Исходная и искаженная строки соответственно:\n");
     printString(orig_message);
     printDamagedString(damaged_message, error_bit);
+    // Вычисление номера поврежденного бита
+    uint8_t diff = 0;
+    printf("Вычисление разницы между контрольными суммами:\n ");
+    printHammingCode(orig_message.HC);
+    printf("\n^\n ");
+    printf("\033[4m");
+    printHammingCode(damaged_message.HC);
+    printf("\033[0m\n ");
+    diff = orig_message.HC ^ damaged_message.HC;    // сложение по модулю 2
+    printHammingCode(diff);
+    printf("\nСделаем реверс бит:\n ");
+    diff = reverseNumber(diff);
+    printHammingCode(diff);
+    printf(" = %u\n", diff);
+    // Пересчет номера поврежденного бита
+    if (diff < 4)
+        diff -= 2;
+    else if (diff < 8)
+        diff -= 3;
+    else if (diff < 16)
+        diff -= 4;
+    else if (diff < 32)
+        diff -= 5;
+    else if (diff < 64)
+        diff -= 6;
+    else
+        diff -= 7;
+    diff = 77 - diff;
+    printf("При пересчете данного числа на номер разряда информационного "
+        "сообщения (см. README.md)\nполучаем номер поврежденного бита: "
+        "%d\n", diff);
+    if (diff == error_bit)
+        printf("Исходный номер поврежденного бита совпал с полученным\n");
+    else
+        //////////////////////////////////////////////!!!!!!! Реализовать лог ошибки
+        ;
 }
 
 // Обнаружение 2-х или 4-х ошибок

@@ -2,6 +2,16 @@
 #include <ctype.h>
 #include "internal.h"
 
+// Вывод кода Хэмминга в бинарном виде
+void printHammingCode(uint8_t code) {
+    for (int8_t i = 7; i >= 0; i--) {
+        if ((1 << i) & code)
+            printf("1");
+        else
+            printf("0");
+    }
+}
+
 // Вывод строки навигационного сообщения в бинарном виде
 void printString(String mess) {
     for (int8_t i = 12; i >= 0; i--) {
@@ -17,12 +27,7 @@ void printString(String mess) {
             printf("0");
     }
     printf(" ");
-    for (int8_t i = 7; i >= 0; i--) {
-        if ((1 << i) & mess.HC)
-            printf("1");
-        else
-            printf("0");
-    }
+    printHammingCode(mess.HC);
     printf("\n");
 }
 
@@ -71,12 +76,7 @@ void printDamagedString(String mess, int bit) {
         }
     }
     printf(" ");
-    for (int8_t i = 7; i >= 0; i--) {
-        if ((1 << i) & mess.HC)
-            printf("1");
-        else
-            printf("0");
-    }
+    printHammingCode(mess.HC);
     printf("\n");
 }
 
@@ -137,4 +137,12 @@ bool isNumber(char *str) {
 uint64_t invertBit(uint64_t number, uint8_t bit) {
     uint64_t mask = 1 << bit;
     return (number & mask) ? (number & ~mask) : (number | mask);
+}
+
+// Реверс бит числа
+uint8_t reverseNumber(uint8_t number) {
+    number = ((number & 0xF0) >> 4) | ((number & 0x0F) << 4);
+    number = ((number & 0xCC) >> 2) | ((number & 0x33) << 2);
+    number = ((number & 0xAA) >> 1) | ((number & 0x55) << 1);
+    return number;
 }
