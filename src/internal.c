@@ -135,7 +135,7 @@ bool isNumber(char *str) {
 
 // Инвертирование бита
 uint64_t invertBit(uint64_t number, uint8_t bit) {
-    uint64_t mask = 1 << bit;
+    uint64_t mask = (uint64_t) 1 << bit;
     return (number & mask) ? (number & ~mask) : (number | mask);
 }
 
