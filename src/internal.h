@@ -11,6 +11,12 @@ typedef struct {
     uint8_t HC;     // 8 бит кода Хэмминга
 } String;
 
+// Структура битовых ошибок
+typedef struct {
+    uint8_t count;  // количество ошибок
+    uint8_t *mass;  // разряды ошибок
+} Errors;
+
 // Битовые маски для вычисления кода Хэмминга
 #define BIT_7_LEFT  0x1B56
 #define BIT_7_RIGHT 0xAAAD5555555AAAAA
@@ -28,13 +34,13 @@ typedef struct {
 #define BIT_1_RIGHT 0x00000000000FFFFF
 
 // Вывод кода Хэмминга в бинарном виде
-void printHammingCode(uint8_t code);
+void printHammingCode(FILE *stream, uint8_t code);
 // Вывод строки навигационного сообщения в бинарном виде
-void printString(String mess);
+void printString(FILE *stream, String mess);
 // Вывод строки навигационного сообщения в шестнадцатеричном виде
-void printStringHEX(String mess);
+void printStringHEX(FILE *stream, String mess);
 // Вывод поврежденной строки на экран
-void printDamagedString(String mess, int bit);
+void printDamagedString(FILE *stream, String mess, Errors bit_error);
 // Вычисление кода Хэмминга
 uint8_t HammingCode(String mess);
 // Подсчет количества единиц в числе
@@ -45,5 +51,9 @@ bool isNumber(char *str);
 uint64_t invertBit(uint64_t number, uint8_t bit);
 // Реверс бит числа
 uint8_t reverseNumber(uint8_t number);
+// Проверка, содержится ли число в массиве
+bool isin(uint8_t *mass, uint8_t size, uint8_t number);
+// Вывод лога ошибки
+void printErrorLog(id_t id, String orig_mess, String damaged_mess, Errors bit_error);
 
 #endif

@@ -1,83 +1,97 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include "internal.h"
 
 // Вывод кода Хэмминга в бинарном виде
-void printHammingCode(uint8_t code) {
+void printHammingCode(FILE *stream, uint8_t code) {
     for (int8_t i = 7; i >= 0; i--) {
         if ((1 << i) & code)
-            printf("1");
+            fprintf(stream, "1");
         else
-            printf("0");
+            fprintf(stream, "0");
     }
 }
 
 // Вывод строки навигационного сообщения в бинарном виде
-void printString(String mess) {
+void printString(FILE *stream, String mess) {
+    // Вывод старших 13-ти бит
     for (int8_t i = 12; i >= 0; i--) {
+        // Если разряд равен единице
         if ((1 << i) & mess.left)
-            printf("1");
+            fprintf(stream, "1");
+        // Иначе разряд равен нулю
         else
-            printf("0");
+            fprintf(stream, "0");
     }
+    // Вывод младших 64-х бит
     for (int8_t i = 63; i >= 0; i--) {
-        if ((1 << i) & mess.right)
-            printf("1");
+        // Если разряд равен единице
+        if (((uint64_t) 1 << i) & mess.right)
+            fprintf(stream, "1");
+        // Иначе разряд равен нулю
         else
-            printf("0");
+            fprintf(stream, "0");
     }
-    printf(" ");
-    printHammingCode(mess.HC);
-    printf("\n");
+    // Вывод контрольной суммы
+    fprintf(stream, " ");
+    printHammingCode(stream, mess.HC);
+    fprintf(stream, "\n");
 }
 
 // Вывод строки навигационного сообщения в шестнадцатеричном виде
-void printStringHEX(String mess) {
-    printf("0x%04X%lX %02X\n", mess.left, mess.right, mess.HC);
+void printStringHEX(FILE *stream, String mess) {
+    fprintf(stream, "0x%04X%lX %02X\n", mess.left, mess.right, mess.HC);
 }
 
 // Вывод поврежденной строки на экран
-void printDamagedString(String mess, int bit) {
+void printDamagedString(FILE *stream, String mess, Errors bit_error) {
+    // Вывод старших 13-ти бит
     for (int8_t i = 12; i >= 0; i--) {
+        // Если разряд равен единице
         if ((1 << i) & mess.left) {
-            // Если поврежденный бит
-            //printf("i = %d bit = %d\n", i, bit - 64);
-            if (i == (bit - 64))
-                printf("\033[31m1\033[0m");
+            // Если разряд находится в списке ошибочных
+            if (isin(bit_error.mass, bit_error.count, i+64))
+                fprintf(stream, "\033[31m1\033[0m");
             // Иначе
             else
-                printf("1");
+                fprintf(stream, "1");
         }
+        // Иначе разряд равен нулю
         else {
-            // Если поврежденный бит
-            if (i == (bit - 64))
-                printf("\033[31m0\033[0m");
+            // Если разряд находится в списке ошибочных
+            if (isin(bit_error.mass, bit_error.count, i+64))
+                fprintf(stream, "\033[31m0\033[0m");
             // Иначе
             else
-                printf("0");
+                fprintf(stream, "0");
         }
     }
+    // Вывод младших 64-х бит
     for (int8_t i = 63; i >= 0; i--) {
-        if ((1 << i) & mess.right) {
-            // Если поврежденный бит
-            if (i == bit)
-                printf("\033[31m1\033[0m");
+        // Если разряд равен единице
+        if (((uint64_t) 1 << i) & mess.right) {
+            // Если разряд находится в списке ошибочных
+            if (isin(bit_error.mass, bit_error.count, i))
+                fprintf(stream, "\033[31m1\033[0m");
             // Иначе
             else
-                printf("1");
+                fprintf(stream, "1");
         }
+        // Иначе разряд равен нулю
         else {
-            // Если поврежденный бит
-            if (i == bit)
-                printf("\033[31m0\033[0m");
+            // Если разряд находится в списке ошибочных
+            if (isin(bit_error.mass, bit_error.count, i))
+                fprintf(stream, "\033[31m0\033[0m");
             // Иначе
             else
-                printf("0");
+                fprintf(stream, "0");
         }
     }
-    printf(" ");
-    printHammingCode(mess.HC);
-    printf("\n");
+    // Вывод контрольной суммы
+    fprintf(stream, " ");
+    printHammingCode(stream, mess.HC);
+    fprintf(stream, "\n");
 }
 
 // Вычисление кода Хэмминга
@@ -145,4 +159,61 @@ uint8_t reverseNumber(uint8_t number) {
     number = ((number & 0xCC) >> 2) | ((number & 0x33) << 2);
     number = ((number & 0xAA) >> 1) | ((number & 0x55) << 1);
     return number;
+}
+
+// Проверка, содержится ли число в массиве
+bool isin(uint8_t *mass, uint8_t size, uint8_t number) {
+    for (uint8_t i = 0; i < size; i++)
+        if (mass[i] == number)
+            return true;
+    return false;
+}
+
+// Вывод лога ошибки
+void printErrorLog(id_t id, String orig_mess, String damaged_mess, Errors bit_error) {
+    fprintf(stderr, "Произошла неизвестная ошибка. Обратитесь к автору "
+        "данной программы, предоставив ему\nлог ошибки, записанный "
+        "в текущей директории под именем 'ErrorLog.txt'\n");
+    
+    // Вывод в консоль
+    fprintf(stderr, "Содержание файла 'ErrorLog.txt':\n"
+        "------------------------------------------------------------"
+        "--------------------------\n");
+    fprintf(stderr, "id = %u\n", id);
+    fprintf(stderr, "Исходная строка:\n");
+    printStringHEX(stderr, orig_mess);
+    printString(stderr, orig_mess);
+    fprintf(stderr, "Искаженная строка:\n");
+    printStringHEX(stderr, damaged_mess);
+    printDamagedString(stderr, damaged_mess, bit_error);
+    fprintf(stderr, "Структура ошибок:\n");
+    fprintf(stderr, "count = %u\n", bit_error.count);
+    fprintf(stderr, "mass  = ");
+    for (uint8_t i = 0; i < bit_error.count; i++)
+        fprintf(stderr, "%u, ", bit_error.mass[i]);
+    fprintf(stderr, "\b\b  \b\b\n\n");
+
+    // Запись в файл
+    FILE *file = fopen("ErrorLog.txt", "w");
+    if (!file) {
+        fprintf(stderr, "Error: Ошибка открытия файла\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(file, "id = %u\n", id);
+    fprintf(file, "Исходная строка:\n");
+    printStringHEX(file, orig_mess);
+    printString(file, orig_mess);
+    fprintf(file, "Искаженная строка:\n");
+    printStringHEX(file, damaged_mess);
+    printDamagedString(file, damaged_mess, bit_error);
+    fprintf(file, "Структура ошибок:\n");
+    fprintf(file, "count = %u\n", bit_error.count);
+    fprintf(file, "mass  = ");
+    for (uint8_t i = 0; i < bit_error.count; i++)
+        fprintf(file, "%u, ", bit_error.mass[i]);
+    fprintf(file, "\b\b  \b\b\n");
+    if (fclose(file)) {
+        fprintf(stderr, "Error: Ошибка закрытия файла\n");
+        exit(EXIT_FAILURE);
+    }
 }
