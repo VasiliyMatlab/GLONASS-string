@@ -1,6 +1,7 @@
 #ifndef INTERNAL_H
 #define INTERNAL_H
 
+// Заголовочные файлы из стандартной библиотеки C
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -33,12 +34,11 @@ typedef struct {
 #define BIT_1_LEFT  0x0000
 #define BIT_1_RIGHT 0x00000000000FFFFF
 
+// Прототипы функций
 // Вывод кода Хэмминга в бинарном виде
 void printHammingCode(FILE *stream, uint8_t code);
 // Вывод строки навигационного сообщения в бинарном виде
 void printString(FILE *stream, String mess);
-// Вывод строки навигационного сообщения в шестнадцатеричном виде
-void printStringHEX(FILE *stream, String mess);
 // Вывод поврежденной строки на экран
 void printDamagedString(FILE *stream, String mess, Errors bit_error);
 // Вычисление кода Хэмминга
@@ -54,6 +54,7 @@ uint8_t reverseNumber(uint8_t number);
 // Проверка, содержится ли число в массиве
 bool isin(uint8_t *mass, uint8_t size, uint8_t number);
 // Вывод лога ошибки
-void printErrorLog(id_t id, String orig_mess, String damaged_mess, Errors bit_error);
+void printErrorLog(id_t id, String orig_mess, String damaged_mess, \
+                   Errors bit_error);
 
 #endif

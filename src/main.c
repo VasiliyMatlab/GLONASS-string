@@ -1,22 +1,37 @@
-#include <stdio.h>
+// Содержание:
+//      Заголовочные файлы
+//      Локальные переменные
+//      Прототипы локальных функций
+//      Глобальные функции
+//      Локальные функции
+
+//----------------------------Заголовочные файлы-------------------------------
+// Заголовочные файлы из стандартной библиотеки C
 #include <locale.h>
 #include <time.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// Пользовательские заголовочные файлы
 #include "internal.h"
 
-// Обнаружение и исправление одной ошибки
-void one_error(String orig_message);
-// Обнаружение 2-х или 4-х ошибок
-void more_errors(String orig_message);
-
+//---------------------------Локальные переменные------------------------------
 // Структура с битовыми ошибками
-Errors bit_error = {0};
+static Errors bit_error = {0};
 
+//-------------------------Прототипы локальных функций-------------------------
+// Обнаружение и исправление одной ошибки
+static void one_error(String orig_message);
+// Обнаружение 2-х или 4-х ошибок
+static void more_errors(String orig_message);
+
+//----------------------------Глобальные функции-------------------------------
 int main() {
     setlocale(LC_ALL, "Rus");
     printf("Генератор строки навигационного сообщения ГЛОНАСС\n");
-    printf("Неверные биты будут подсвечиваться \033[31mкрасным\033[0m цветом\n");
+    printf("Неверные биты будут подсвечиваться "
+           "\033[31mкрасным\033[0m цветом\n");
     String message = {0};
     // Генерация информационной части сообщения
     srand(time(NULL));
@@ -24,11 +39,6 @@ int main() {
     message.right = ((uint64_t) rand()) << 33;
     message.right = message.right | (((uint64_t) rand()) << 2);
     message.right = message.right | (rand() % 4);
-    /* 52 */
-    // message.left = 0b0000000000011;
-    // message.right = 0b1000100010110011011100001110100110001000101100110111000011101001;
-    // message.left = 0b0011100100011;
-    // message.right = 0b1111100000010001110000000100100111111000000100011100000001001001;
     // Вычисление кода Хэмминга
     message.HC = HammingCode(message);
     printf("Сгенерированная строка (последние 8 бит - код Хэмминга): \n");
@@ -65,8 +75,9 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+//----------------------------Локальные функции--------------------------------
 // Обнаружение и исправление одной ошибки
-void one_error(String orig_message) {
+static void one_error(String orig_message) {
     int error_bit = -1;
     printf("Хотите ввести сами номер бита ошибки? (Да или Нет) ");
     while (1) {
@@ -91,12 +102,12 @@ void one_error(String orig_message) {
                     // Если введено неверно, то вводим еще раз
                     error_bit = -1;
                     printf("Введенное число лежит вне диапазона; "
-                        "попробуйте еще раз (0-76): ");
+                           "попробуйте еще раз (0-76): ");
                     continue;
                 }
                 // Если введено не число
                 printf("Неизвестный формат сообщения; "
-                    "попробуйте еще раз (0-76): ");
+                       "попробуйте еще раз (0-76): ");
             }
         }
         // Если пользователь выбирает "Нет"
@@ -154,8 +165,8 @@ void one_error(String orig_message) {
         diff -= 7;
     diff = 77 - diff;
     printf("При пересчете данного числа на номер разряда информационного "
-        "сообщения (см. README.md)\nполучаем номер поврежденного бита: "
-        "%d\n", diff);
+           "сообщения (см. README.md)\nполучаем номер поврежденного бита: "
+           "%d\n", diff);
     // Если исходный номер поврежденного бита и вычисленный не совпадают,
     // то выводим ошибку
     if (diff != error_bit) {
@@ -167,7 +178,7 @@ void one_error(String orig_message) {
 }
 
 // Обнаружение 2-х или 4-х ошибок
-void more_errors(String orig_message) {
+static void more_errors(String orig_message) {
     // Генерация номеров разрядов поврежденных бит
     bit_error.mass  = (uint8_t *) malloc(bit_error.count*sizeof(uint8_t));
     for (uint8_t i = 0; i < bit_error.count; i++) {
@@ -180,13 +191,19 @@ void more_errors(String orig_message) {
         else
             bit_error.mass[i] = rand_number;
     }
+    printf("Номера искаженных бит: ");
+    for (uint8_t i = 0; i < bit_error.count; i++)
+        printf("%d, ", bit_error.mass[i]);
+    printf("\b\b  \b\b\n");
     String damaged_message = orig_message;
     // Инверсия бит
     for (uint8_t i = 0; i < bit_error.count; i++) {
         if (bit_error.mass[i] > 63)
-            damaged_message.left = invertBit(damaged_message.left, bit_error.mass[i] - 64);
+            damaged_message.left = invertBit(damaged_message.left, \
+                                             bit_error.mass[i] - 64);
         else
-            damaged_message.right = invertBit(damaged_message.right, bit_error.mass[i]);
+            damaged_message.right = invertBit(damaged_message.right, \
+                                              bit_error.mass[i]);
     }
     // Пересчет контрольной суммы
     damaged_message.HC = HammingCode(damaged_message);

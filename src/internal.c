@@ -1,8 +1,23 @@
-#include <stdio.h>
+// Содержание:
+//      Заголовочные файлы
+//      Прототипы локальных функций
+//      Глобальные функции
+//      Локальные функции
+
+//----------------------------Заголовочные файлы-------------------------------
+// Заголовочные файлы из стандартной библиотеки C
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+// Пользовательские заголовочные файлы
 #include "internal.h"
 
+//-------------------------Прототипы локальных функций-------------------------
+// Вывод строки навигационного сообщения в шестнадцатеричном виде
+static void printStringHEX(FILE *stream, String mess);
+
+//----------------------------Глобальные функции-------------------------------
 // Вывод кода Хэмминга в бинарном виде
 void printHammingCode(FILE *stream, uint8_t code) {
     for (int8_t i = 7; i >= 0; i--) {
@@ -37,11 +52,6 @@ void printString(FILE *stream, String mess) {
     fprintf(stream, " ");
     printHammingCode(stream, mess.HC);
     fprintf(stream, "\n");
-}
-
-// Вывод строки навигационного сообщения в шестнадцатеричном виде
-void printStringHEX(FILE *stream, String mess) {
-    fprintf(stream, "0x%04X%lX %02X\n", mess.left, mess.right, mess.HC);
 }
 
 // Вывод поврежденной строки на экран
@@ -170,7 +180,8 @@ bool isin(uint8_t *mass, uint8_t size, uint8_t number) {
 }
 
 // Вывод лога ошибки
-void printErrorLog(id_t id, String orig_mess, String damaged_mess, Errors bit_error) {
+void printErrorLog(id_t id, String orig_mess, String damaged_mess, \
+                   Errors bit_error) {
     fprintf(stderr, "Произошла неизвестная ошибка. Обратитесь к автору "
         "данной программы, предоставив ему\nлог ошибки, записанный "
         "в текущей директории под именем 'ErrorLog.txt'\n");
@@ -216,4 +227,10 @@ void printErrorLog(id_t id, String orig_mess, String damaged_mess, Errors bit_er
         fprintf(stderr, "Error: Ошибка закрытия файла\n");
         exit(EXIT_FAILURE);
     }
+}
+
+//----------------------------Локальные функции--------------------------------
+// Вывод строки навигационного сообщения в шестнадцатеричном виде
+static void printStringHEX(FILE *stream, String mess) {
+    fprintf(stream, "0x%04X%lX %02X\n", mess.left, mess.right, mess.HC);
 }
