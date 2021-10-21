@@ -10,6 +10,7 @@ all: start program
 
 start:
 	@ echo "Start building"
+	../scripts/helper.sh
 
 program: $(BUILD)/main.o $(BUILD)/internal.o
 	$(CC) $(BUILD)/main.o $(BUILD)/internal.o -o $(BIN)/$(PROJECT)
