@@ -68,5 +68,5 @@ ls
 После данных действий ПО выведет исходную и поврежденную строки и вычислит в автоматическом режиме номер искаженного бита с помощью различий в контрольных суммах.
 
 ***
-<p align="center"><a href="https://github.com/VasiliyMatlab"><img src="figures/profile.jpg" width="100" alt="VasiliyMatlab" /></a></p>
+<p align="center"><a href="https://github.com/VasiliyMatlab"><img src="https://github.com/VasiliyMatlab.png" width="100" alt="VasiliyMatlab" /></a></p>
 <p align="center"><a href="https://github.com/VasiliyMatlab" style="color: #000000">VasiliyMatlab</a></p>
