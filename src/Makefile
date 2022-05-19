@@ -1,8 +1,9 @@
 BIN = ../bin
 BUILD = ../build
 CC = gcc
-FLAGS = -c -Wall
 PROJECT = GLONASS_string
+СFLAGS = -c -Wall -Werror -std=gnu17 -O3
+LDFLAGS = -g -Wall -Werror -std=gnu17 -O3
 
 
 all: start program
@@ -10,18 +11,22 @@ all: start program
 
 start:
 	@ echo "Start building"
-	../scripts/helper.sh
+	mkdir -pv ../build
+	mkdir -pv ../bin
 
 program: $(BUILD)/main.o $(BUILD)/internal.o
-	$(CC) $(BUILD)/main.o $(BUILD)/internal.o -o $(BIN)/$(PROJECT)
+	$(CC) $(LDFLAGS) $(BUILD)/main.o $(BUILD)/internal.o -o $(BIN)/$(PROJECT)
 
 $(BUILD)/main.o: main.c internal.h
-	$(CC) $(FLAGS) main.c -o $(BUILD)/main.o
+	$(CC) $(СFLAGS) main.c -o $(BUILD)/main.o
 
 $(BUILD)/internal.o: internal.c internal.h
-	$(CC) $(FLAGS) internal.c -o $(BUILD)/internal.o
+	$(CC) $(СFLAGS) internal.c -o $(BUILD)/internal.o
 
+
+archiving:
+	cd $(BIN)/ && tar -zcvf Binaries.tar.gz $(PROJECT)
 
 clean:
-	rm $(BUILD)/*
-	rm $(BIN)/*
+	rm -rv $(BUILD)
+	rm -rv $(BIN)

@@ -4,6 +4,7 @@
 // Заголовочные файлы из стандартной библиотеки C
 #include <stdint.h>
 #include <stdbool.h>
+#include <sys/types.h>
 
 // Структура строки навигационного сообщения
 typedef struct {
@@ -54,7 +55,7 @@ uint8_t reverseNumber(uint8_t number);
 // Проверка, содержится ли число в массиве
 bool isin(uint8_t *mass, uint8_t size, uint8_t number);
 // Вывод лога ошибки
-void printErrorLog(id_t id, String orig_mess, String damaged_mess, \
+void printErrorLog(uid_t id, String orig_mess, String damaged_mess, \
                    Errors bit_error);
 
 #endif

@@ -180,7 +180,7 @@ bool isin(uint8_t *mass, uint8_t size, uint8_t number) {
 }
 
 // Вывод лога ошибки
-void printErrorLog(id_t id, String orig_mess, String damaged_mess, \
+void printErrorLog(uid_t id, String orig_mess, String damaged_mess, \
                    Errors bit_error) {
     fprintf(stderr, "Произошла неизвестная ошибка. Обратитесь к автору "
         "данной программы, предоставив ему\nлог ошибки, записанный "
